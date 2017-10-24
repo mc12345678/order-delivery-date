@@ -11,6 +11,17 @@
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
  * @version GIT: $Id: Author: Ian Wilson  Mon Oct 28 17:54:33 2013 +0000 Modified in v1.5.2 $
  */
+
+ /* 
+ * Altered for ORDER DELIVERY DATE contribution
+ * Zen Cart Version: 1.3.9f
+ * Modification Date: 2010-09-19
+ * Author of this modification: That Software Guy
+ * Previous authors to this contribution are: Peter Martin (pe7er), James Betesh, MrMeech
+ * This contribution is licensed under the GNU Public License V2.0
+ * http://www.zen-cart.com/license/2_0.txt
+ */
+
 ?>
 <div class="centerColumn" id="checkoutShipping">
 
@@ -128,10 +139,10 @@
 
 <!-- Bof Order Delivery Date -->
 <fieldset class="shipping" id="order_delivery_date">
-<legend><?php echo TABLE_HEADING_DELIVERY_DATE; ?></legend>
+<legend><?php echo sprintf(TABLE_HEADING_DELIVERY_DATE, (defined('MIN_DISPLAY_DELIVERY_DATE') && MIN_DISPLAY_DELIVERY_DATE > 0) ? TABLE_HEADING_DELIVERY_DATE_IS_REQUIRED : TABLE_HEADING_DELIVERY_DATE_IS_OPTIONAL); ?></legend>
 
 <label for="order_delivery_date">Date:</label>
-<input /*readonly="readonly"*/ id="date" name="order_delivery_date" type="text" value="<?php echo $order_delivery_date; ?>">
+<input id="date" name="order_delivery_date" type="text" value="<?php echo $order_delivery_date; ?>">
 </fieldset>
 <!-- Eof Order Delivery Date -->
 

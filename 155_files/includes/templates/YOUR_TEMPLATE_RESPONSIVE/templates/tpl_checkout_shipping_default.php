@@ -139,10 +139,10 @@
 
 <!-- Bof Order Delivery Date -->
 <fieldset class="shipping" id="order_delivery_date">
-<legend><?php echo TABLE_HEADING_DELIVERY_DATE; ?></legend>
+<legend><?php echo sprintf(TABLE_HEADING_DELIVERY_DATE, (defined('MIN_DISPLAY_DELIVERY_DATE') && MIN_DISPLAY_DELIVERY_DATE > 0) ? TABLE_HEADING_DELIVERY_DATE_IS_REQUIRED : TABLE_HEADING_DELIVERY_DATE_IS_OPTIONAL); ?></legend>
 
 <label for="order_delivery_date">Date:</label>
-<input /*readonly="readonly"*/ id="date" name="order_delivery_date" type="text" value="<?php echo $order_delivery_date; ?>">
+<input id="date" name="order_delivery_date" type="text" value="<?php echo $order_delivery_date; ?>">
 </fieldset>
 <!-- Eof Order Delivery Date -->
 

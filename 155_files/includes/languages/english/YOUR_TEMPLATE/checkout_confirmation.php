@@ -40,5 +40,6 @@ define('OUT_OF_STOCK_CAN_CHECKOUT', 'Products marked with ' . STOCK_MARK_PRODUCT
 
 // Begin Order Delivery Date
 define('TABLE_HEADING_DELIVERY_DATE', 'Desired Delivery Date');
+define('NONE_SELECTED', 'None Selected');
 // End Order Delivery Date
 ?>

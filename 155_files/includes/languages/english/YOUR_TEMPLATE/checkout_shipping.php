@@ -47,7 +47,9 @@ define('FREE_SHIPPING_DESCRIPTION', 'Free shipping for orders over %s');
 define('ERROR_PLEASE_RESELECT_SHIPPING_METHOD', 'Your available shipping options have changed. Please re-select your desired shipping method.');
 
   // BEGIN Order Delivery Date
-  define('TABLE_HEADING_DELIVERY_DATE', 'Desired Delivery Date is Required!');
+  define('TABLE_HEADING_DELIVERY_DATE', 'Desired Delivery Date%s');
+  define('TABLE_HEADING_DELIVERY_DATE_IS_OPTIONAL', ' is Optional!');
+  define('TABLE_HEADING_DELIVERY_DATE_IS_REQUIRED', ' is Required!');
   define('ERROR_PLEASE_CHOOSE_DELIVERY_DATE', 'Please choose a delivery date');
 // END Order Delivery 
 ?>
