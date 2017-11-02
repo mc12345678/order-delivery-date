@@ -29,6 +29,7 @@ class zcObserverOrderDeliveryDateObserver extends base {
     $attachNotifier[] = 'NOTIFY_ORDER_AFTER_QUERY';
     $attachNotifier[] = 'NOTIFY_ORDER_CART_FINISHED';
     $attachNotifier[] = 'NOTIFY_ORDER_DURING_CREATE_ADDED_ORDER_HEADER';
+    $attachNotifier[] = 'NOTIFY_ORDER_EMAIL_BEFORE_PRODUCTS';
     $attachNotifier[] = 'NOTIFY_HEADER_START_CHECKOUT_SHIPPING';
     $attachNotifier[] = 'ORDER_QUERY_ADMIN_COMPLETE';
 
