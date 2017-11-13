@@ -1,6 +1,6 @@
 Contribution:  Order Delivery Date
-Version:       2.4 
-Designed For:  Zen Cart v1.3.8a, 1.3.9f and 1.5.1 Releases
+Version:       2.5.2 
+Designed For:  Zen Cart v1.3.8a, 1.3.9f, 1.5.1 and 1.5.5 Releases
 Forum Page:    http://www.zen-cart.com/forum/showthread.php?t=92762
 
 
@@ -23,7 +23,7 @@ b. Run the sql statement (shipdate.sql) against your database using
 Admin->Tools->Install SQL patches.
 
 c. Copy files to your install.  
-   - Be sure to use the directory appropriate for your Zen Cart version (1.3.8 or 1.3.9).
+   - Be sure to use the directory appropriate for your Zen Cart version (1.3.8, 1.3.9, 1.5.1, 1.5.5, etc.).
    - Make sure to change any folders labeled YOUR_TEMPLATE to the template you are using.
 
 To change blocked out dates, open the following file and read the instructions contained within it: includes/modules/pages/checkout_shipping/jscript_calendar_head.php
@@ -39,6 +39,16 @@ update_to_2.4.sql in Admin->Tools->Install SQL Patches.
 ========================================================
 
 HISTORY:
+
+11/13/2017 by mc12345678 (http://mc12345678.com) updated to finally fully work with ZC 1.5.5 with minimal software edits
+  and using the ZC observer/notifier system where able.
+
+02/15/2017 by mc12345678 http://mc12345678.com
+- repackaged zip file, updated version number to 2.5.1. no code changes.
+
+02/11/2017 by mc12345678 http://mc12345678.com
+- made date entry block not readonly, date entry also repopulates based on previous entry.
+- updated files for ZC 1.5.5.
 
 12/10/2012 by Delia Wilson Lunsford
 - with help from That Software Guy, added delivery date as required or not required, included updated version of mootools js for IE 9 problems.
