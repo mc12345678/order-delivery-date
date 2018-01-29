@@ -174,7 +174,28 @@ class zcObserverOrderDeliveryDateObserver extends base {
     return $pass && $order->content_type !== 'virtual';
   }
 
-  function update(&$callingClass, $notifier) {
+  function update(&$callingClass, $notifier, $paramsArray) {
+    if ($notifier == 'NOTIFY_ORDER_AFTER_QUERY') {
+//      $this->updateNotifyOrderAfterQuery($callingClass, $notifier, $paramsArray, $order_id);
+    }
+    if ($notifier == 'NOTIFY_ORDER_CART_FINISHED') {
+      $this->updateNotifyOrderCartFinished($callingClass, $notifier);
+    }
+    if ($notifier == 'NOTIFY_ORDER_DURING_CREATE_ADDED_ORDER_HEADER') {
+      $insert_id = $paramsArray['orders_id'];
+      $this->updateNotifyOrderDuringCreateAddedOrderHeader($callingClass, $notifier, $paramsArray, $insert_id);
+    }
+    if ($notifier == 'NOTIFY_ORDER_EMAIL_BEFORE_PRODUCTS') {
+      $email_order = null; // Need to figure out how this would work for ZC 1.5.1 if at all.
+      $html_msg = null; // Need to figure out how this would work for ZC 1.5.1 if at all.
+      $this->updateNotifyOrderEmailBeforeProducts($callingClass, $notifier, $paramsArray, $email_order, $html_msg);
+    }
+    if ($notifier == 'NOTIFY_HEADER_START_CHECKOUT_SHIPPING') {
+      $this->updateNotifyHeaderStartCheckoutShipping($callingClass, $notifier);
+    }
+    if ($notifier == 'ORDER_QUERY_ADMIN_COMPLETE') {
+      $this->updateOrderQueryAdminComplete($callingClass, $notifier, $paramsArray);
+    }
     
   }
 }
