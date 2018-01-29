@@ -1,5 +1,5 @@
 Contribution:  Order Delivery Date
-Version:       2.5.2 
+Version:       2.6
 Designed For:  Zen Cart v1.3.8a, 1.3.9f, 1.5.1 and 1.5.5 Releases
 Forum Page:    http://www.zen-cart.com/forum/showthread.php?t=92762
 
@@ -11,7 +11,10 @@ I will not be held responsible!
 =================================================
 
 WHAT DOES THIS MODULE DO?
-This modification adds a Ship Order Date feature to the checkout process. The end-user is presented with an aesthetic, fully configurable pop-up calendar for them to select their delivery date.  Changes are also seen in the admin side (Invoice, Packing Slip, View Order) and are reflected in emails to the customer that are generated when completing an order, and when updating order status via Admin.
+This modification adds a Ship Order Date feature to the checkout process. The end-user is presented with an aesthetic,
+fully configurable pop-up calendar for them to select their delivery date.  Changes are also seen in the admin 
+side (Invoice, Packing Slip, View Order) and are reflected in emails to the customer that are generated when 
+completing an order, and when updating order status via Admin.
 
 ========================================================
 
@@ -29,16 +32,39 @@ c. Copy files to your install.
 To change blocked out dates, open the following file and read the instructions contained within it: includes/modules/pages/checkout_shipping/jscript_calendar_head.php
 
 
-d. The sql file adds a new setting under configuration>minimum values. If set to 1, delivery date is required. If set to 0, delivery date is not required. Default is 1 - required.
+d. The sql file adds a new setting under configuration>minimum values. If set to a value greater than 0, delivery date is required. If set to 0, delivery date is not required. Default is 1 - required.
 
+e. There is now an option to not display the Order Delivery Date selector based on the deliver to address.
+   the ZC 1.5.5 file: includes\extra_datafiles\order_delivery_date_location.php contains a define that indicates on
+   which destination address type the delivery date field should be shown (national to the store's location,
+   international, or both). (When not shown it ignores the settings above about required or optional, but when shown
+   then it follows the settings of required or optional.)
 
 UPGRADE: 
 If you are upgrading from an older version than 2.4, please run the file 
 update_to_2.4.sql in Admin->Tools->Install SQL Patches. 
 
+If you are upgrading from a version before 2.5.2, there are core files that no longer require revision to support this
+plugin and therefore either now or on your next upgrade the changes previously made to the following files are no longer
+required and can be removed.  This does not necessarily mean that the file should be "blindly" replaced with an original
+version of the file, but that there should be a review performed to see what changes may have been incorporated by other
+plugins.
+
+admin/includes/classes/order.php
+includes/classes/order.php
+includes/modules/pages/checkout_shipping/header_php.php
+
 ========================================================
 
 HISTORY:
+
+01/28/2018 by mc12345678 (http://mc12345678.com) (v2.6) as requested by Audrey at: https://www.zen-cart.com/showthread.php?92762-Order-Delivery-Date-Support-Thread&p=1341081#post1341081
+  incorporated a method to display/hide (and therefore support requiring) the order delivery date field based on whether
+  the reciepient address is within the store's nation or outside of it. Setting for this is current in the file:
+  includes\extra_datafiles\order_delivery_date_location.php
+  - Also updated the confirmation_checkout pages again to potentially support
+  expected functionality of using PayPal's In Context payment if it has been incorporated into the store.
+  - Corrected minor items that would issue notices if site were run in strict mode.
 
 11/13/2017 by mc12345678 (http://mc12345678.com) updated to finally fully work with ZC 1.5.5 with minimal software edits
   and using the ZC observer/notifier system where able.
