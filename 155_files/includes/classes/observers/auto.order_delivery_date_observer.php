@@ -52,8 +52,31 @@ class zcObserverOrderDeliveryDateObserver extends base {
   //  To support a different delivery date by product, would want to either cycle through all of the product in this
   //    function or use the notifier 'NOTIFY_ORDER_CART_ADD_PRODUCT_LIST' to work with each product as it comes along.
   function updateNotifyOrderCartFinished(&$callingClass, $notifier) {
+    global $display_delivery_date, $messageStack, $order_delivery_date;
     
-    $callingClass->info['order_delivery_date'] = $_SESSION['order_delivery_date'];
+
+    if ( isset($_POST['action']) && ($_POST['action'] == 'process') ) {
+      $regional_display = $this->display_delivery_date($callingClass);
+
+      if (!$regional_display && isset($_SESSION['order_delivery_date'])) {
+        unset($_SESSION['order_delivery_date']);
+      }
+
+      if (!zen_not_null($this->order_delivery_date) && defined('MIN_DISPLAY_DELIVERY_DATE') && MIN_DISPLAY_DELIVERY_DATE > 0 && $regional_display)
+      {
+        $messageStack->add_session('checkout_shipping', ERROR_PLEASE_CHOOSE_DELIVERY_DATE, 'error');
+
+        unset($_SESSION['order_delivery_date']);
+
+        zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
+      }
+    }
+
+    $callingClass->info['order_delivery_date'] = isset($_SESSION['order_delivery_date']) ? $_SESSION['order_delivery_date'] : null;
+    $order_delivery_date = $this->order_delivery_date;
+
+    // set the global variable to display the delivery date (or not) based on the destination of the delivery.
+    $display_delivery_date = (defined('ORDER_DELIVERY_DATE_DISPLAY_ALWAYS') && ORDER_DELIVERY_DATE_DISPLAY_ALWAYS === 'true' || $this->display_delivery_date($callingClass));
   }
 
   //  ZC 1.5.5: $this->notify('NOTIFY_ORDER_DURING_CREATE_ADDED_ORDER_HEADER', array_merge(array('orders_id' => $insert_id, 'shipping_weight' => $_SESSION['cart']->weight), $sql_data_array), $insert_id);
@@ -82,31 +105,17 @@ class zcObserverOrderDeliveryDateObserver extends base {
   // ZC155:   $zco_notifier->notify('NOTIFY_HEADER_START_CHECKOUT_SHIPPING');
   // NOTIFY_HEADER_START_CHECKOUT_SHIPPING
   function updateNotifyHeaderStartCheckoutShipping(&$callingClass, $notifier) {
-    global $order_delivery_date, $messageStack;
 
       // BEGIN Order Delivery Date
     if (isset($_SESSION['order_delivery_date'])) {
-      $order_delivery_date = $_SESSION['order_delivery_date'];
+      $this->order_delivery_date = $_SESSION['order_delivery_date'];
     }
 
     if ( isset($_POST['action']) && ($_POST['action'] == 'process') ) {
       if (zen_not_null($_POST['order_delivery_date'])) {
         $_SESSION['order_delivery_date'] = zen_db_prepare_input($_POST['order_delivery_date']);
-      } else if (defined('MIN_DISPLAY_DELIVERY_DATE') && MIN_DISPLAY_DELIVERY_DATE > 0)
-      {
-        $messageStack->add_session('checkout_shipping', ERROR_PLEASE_CHOOSE_DELIVERY_DATE, 'error');
-
-        unset($_SESSION['order_delivery_date']);
-        unset($order_delivery_date);
-
-        zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
-      } else {
-        // If nothing was posted, and the date is not required, then
-        //  be sure to clear the date from the session so that the
-        //  nothing will carry forward.
-        unset($_SESSION['order_delivery_date']);
       }
-      $order_delivery_date = $_SESSION['order_delivery_date'];
+      $this->order_delivery_date = (isset($_SESSION['order_delivery_date'])) ? $_SESSION['order_delivery_date'] : null;
     }
   }
 
@@ -122,6 +131,47 @@ class zcObserverOrderDeliveryDateObserver extends base {
                            where orders_id = " . (int)$order_id);
 
     $callingClass->info = array_merge($callingClass->info, array('order_delivery_date' => $order->fields['order_delivery_date']));
+  }
+
+  /**
+  * Function to support display of the delivery date based on known internally collected order information.
+  **/
+  function display_delivery_date($order = NULL) {
+    // if this  function is called, but there is no ORDER_DELIVERY_DATE_LOCATION  defined, then allow the delivery date to be displayed.
+    if (!defined('ORDER_DELIVERY_DATE_LOCATION')) return true;
+    //  If the location to be sent to is not defined, then address information  will not be available for the $order class to determine
+    //  the destination, indicate to display the delivery date.
+    if (!isset($_SESSION['sendto'])) return true;
+
+    if (!isset($order)) {
+      // This area may need additional assignments in order to generate the appropriate information to be handled below
+      //   if $order has not previously been fully populated.
+      if (!class_exists('order')) {
+        require_once(DIR_WS_CLASSES . 'order.php');
+      }
+      $order = new order;
+    }
+
+    $pass = false;
+
+    switch (ORDER_DELIVERY_DATE_LOCATION) {
+      case 'national':
+        if ($order->delivery['country_id'] == STORE_COUNTRY) {
+          $pass = true;
+        }
+        break;
+      case 'international':
+        if ($order->delivery['country_id'] != STORE_COUNTRY) {
+          $pass = true;
+        }
+        break;
+      case 'both':
+        $pass = true;
+        break;
+    }
+
+    // If everything in the order is virtual, then there should not be a delivery date.
+    return $pass && $order->content_type !== 'virtual';
   }
 
   function update(&$callingClass, $notifier) {

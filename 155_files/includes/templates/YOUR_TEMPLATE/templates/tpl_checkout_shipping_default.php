@@ -138,12 +138,14 @@
 ?>
 
 <!-- Bof Order Delivery Date -->
+<?php if (isset($display_delivery_date) ? $display_delivery_date : true) { ?>
 <fieldset class="shipping" id="order_delivery_date">
-<legend><?php echo sprintf(TABLE_HEADING_DELIVERY_DATE, (defined('MIN_DISPLAY_DELIVERY_DATE') && MIN_DISPLAY_DELIVERY_DATE > 0) ? TABLE_HEADING_DELIVERY_DATE_IS_REQUIRED : TABLE_HEADING_DELIVERY_DATE_IS_OPTIONAL); ?></legend>
+<legend><?php echo sprintf(TABLE_HEADING_DELIVERY_DATE, (defined('MIN_DISPLAY_DELIVERY_DATE') && MIN_DISPLAY_DELIVERY_DATE > 0 && (method_exists($zcObserverOrderDeliveryDateObserver, 'display_delivery_date') ? $zcObserverOrderDeliveryDateObserver->display_delivery_date($order) : true)) ? TABLE_HEADING_DELIVERY_DATE_IS_REQUIRED : TABLE_HEADING_DELIVERY_DATE_IS_OPTIONAL); ?></legend>
 
 <label for="order_delivery_date">Date:</label>
 <input id="date" name="order_delivery_date" type="text" value="<?php echo $order_delivery_date; ?>">
 </fieldset>
+<?php } ?>
 <!-- Eof Order Delivery Date -->
 
 <fieldset class="shipping" id="comments">
