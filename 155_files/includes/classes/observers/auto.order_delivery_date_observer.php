@@ -38,11 +38,10 @@ class zcObserverOrderDeliveryDateObserver extends base {
 
   //  ZC1.5.5: $this->notify('NOTIFY_ORDER_AFTER_QUERY', array(), $order_id);
   function updateNotifyOrderAfterQuery(&$callingClass, $notifier, $not_set_array, &$order_id) {
-    global $db;
 
     $get_delivery_date = 'SELECT order_delivery_date FROM ' . TABLE_ORDERS . '  WHERE orders_id = :order_id:';
-    $get_delivery_date = $db->bindVars($get_delivery_date, ':order_id:', $order_id, 'integer');
-    $delivery_date = $db->Execute($get_delivery_date);
+    $get_delivery_date = $GLOBALS['db']->bindVars($get_delivery_date, ':order_id:', $order_id, 'integer');
+    $delivery_date = $GLOBALS['db']->Execute($get_delivery_date);
 
     $callingClass->info['order_delivery_date'] = $delivery_date->fields['order_delivery_date'];
   }
@@ -52,7 +51,6 @@ class zcObserverOrderDeliveryDateObserver extends base {
   //  To support a different delivery date by product, would want to either cycle through all of the product in this
   //    function or use the notifier 'NOTIFY_ORDER_CART_ADD_PRODUCT_LIST' to work with each product as it comes along.
   function updateNotifyOrderCartFinished(&$callingClass, $notifier) {
-    global $display_delivery_date, $messageStack, $order_delivery_date;
     
 
     if ( isset($_POST['action']) && ($_POST['action'] == 'process') ) {
@@ -64,7 +62,7 @@ class zcObserverOrderDeliveryDateObserver extends base {
 
       if (!zen_not_null($this->order_delivery_date) && defined('MIN_DISPLAY_DELIVERY_DATE') && MIN_DISPLAY_DELIVERY_DATE > 0 && $regional_display)
       {
-        $messageStack->add_session('checkout_shipping', ERROR_PLEASE_CHOOSE_DELIVERY_DATE, 'error');
+        $GLOBALS['messageStack']->add_session('checkout_shipping', ERROR_PLEASE_CHOOSE_DELIVERY_DATE, 'error');
 
         unset($_SESSION['order_delivery_date']);
 
@@ -73,10 +71,10 @@ class zcObserverOrderDeliveryDateObserver extends base {
     }
 
     $callingClass->info['order_delivery_date'] = isset($_SESSION['order_delivery_date']) ? $_SESSION['order_delivery_date'] : null;
-    $order_delivery_date = $this->order_delivery_date;
+    $GLOBALS['order_delivery_date'] = $this->order_delivery_date;
 
     // set the global variable to display the delivery date (or not) based on the destination of the delivery.
-    $display_delivery_date = (defined('ORDER_DELIVERY_DATE_DISPLAY_ALWAYS') && ORDER_DELIVERY_DATE_DISPLAY_ALWAYS === 'true' || $this->display_delivery_date($callingClass));
+    $GLOBALS['display_delivery_date'] = (defined('ORDER_DELIVERY_DATE_DISPLAY_ALWAYS') && ORDER_DELIVERY_DATE_DISPLAY_ALWAYS === 'true' || $this->display_delivery_date($callingClass));
   }
 
   //  ZC 1.5.5: $this->notify('NOTIFY_ORDER_DURING_CREATE_ADDED_ORDER_HEADER', array_merge(array('orders_id' => $insert_id, 'shipping_weight' => $_SESSION['cart']->weight), $sql_data_array), $insert_id);
@@ -121,12 +119,11 @@ class zcObserverOrderDeliveryDateObserver extends base {
 
   // ZC 1.5.5: $this->notify('ORDER_QUERY_ADMIN_COMPLETE', array('orders_id' => $order_id));
   function updateOrderQueryAdminComplete(&$callingClass, $notifier, $paramsArray) {
-    global $db;
 
     $order_id = $paramsArray['orders_id'];
 
     // Need a test for presence of field/plugin? Prefer something already in memory rather than asking the DB.
-    $order = $db->Execute("SELECT order_delivery_date 
+    $order = $GLOBALS['db']->Execute("SELECT order_delivery_date 
                            from " . TABLE_ORDERS . "
                            where orders_id = " . (int)$order_id);
 
