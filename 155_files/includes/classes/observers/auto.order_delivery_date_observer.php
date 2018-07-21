@@ -54,18 +54,20 @@ class zcObserverOrderDeliveryDateObserver extends base {
   //    function or use the notifier 'NOTIFY_ORDER_CART_ADD_PRODUCT_LIST' to work with each product as it comes along.
   function updateNotifyOrderCartFinished(&$callingClass, $notifier) {
     
+    if (isset($_POST['action']) && ($_POST['action'] == 'process')) {
 
-    if ( isset($_POST['action']) && ($_POST['action'] == 'process') ) {
       $regional_display = $this->display_delivery_date($callingClass);
 
-      if (!$regional_display && isset($_SESSION['order_delivery_date'])) {
-        unset($_SESSION['order_delivery_date']);
-      }
+      // If want to completely remove any selection of a delivery date when the option would become
+      //   optional because of sending out-of-state, then uncomment the if statement and unset below.
+//      if (!$regional_display && isset($_SESSION['order_delivery_date'])) {
+//        unset($_SESSION['order_delivery_date']);
+//      }
 
       if (!zen_not_null($this->order_delivery_date) && defined('MIN_DISPLAY_DELIVERY_DATE') && MIN_DISPLAY_DELIVERY_DATE > 0 && $regional_display)
       {
         $GLOBALS['messageStack']->add_session('checkout_shipping', ERROR_PLEASE_CHOOSE_DELIVERY_DATE, 'error');
-
+        // blank out the existing order_delivery_date information when reloading the page to force an entry.
         unset($_SESSION['order_delivery_date']);
 
         zen_redirect(zen_href_link(FILENAME_CHECKOUT_SHIPPING, '', 'SSL'));
@@ -181,9 +183,9 @@ class zcObserverOrderDeliveryDateObserver extends base {
   * Function to support display of the delivery date based on known internally collected order information.
   **/
   function display_delivery_date($order = NULL) {
-    // if this  function is called, but there is no ORDER_DELIVERY_DATE_LOCATION  defined, then allow the delivery date to be displayed.
+    // if this function is called, but there is no ORDER_DELIVERY_DATE_LOCATION defined, then allow the delivery date to be displayed.
     if (!defined('ORDER_DELIVERY_DATE_LOCATION')) return true;
-    //  If the location to be sent to is not defined, then address information  will not be available for the $order class to determine
+    //  If the location to be sent to is not defined, then address information will not be available for the $order class to determine
     //  the destination, indicate to display the delivery date.
     if (!isset($_SESSION['sendto'])) return true;
 
