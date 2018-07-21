@@ -31,6 +31,8 @@ class zcObserverOrderDeliveryDateObserver extends base {
     $attachNotifier[] = 'NOTIFY_ORDER_DURING_CREATE_ADDED_ORDER_HEADER';
     $attachNotifier[] = 'NOTIFY_ORDER_EMAIL_BEFORE_PRODUCTS';
     $attachNotifier[] = 'NOTIFY_HEADER_START_CHECKOUT_SHIPPING';
+    $attachNotifier[] = 'NOTIFY_HEADER_END_CHECKOUT_SHIPPING';
+    $attachNotifier[] = 'NOTIFY_HEADER_END_CHECKOUT_CONFIRMATION';
     $attachNotifier[] = 'ORDER_QUERY_ADMIN_COMPLETE';
 
     $this->attach($this, $attachNotifier);
@@ -81,7 +83,20 @@ class zcObserverOrderDeliveryDateObserver extends base {
   function updateNotifyOrderDuringCreateAddedOrderHeader(&$callingClass, $notifier, $data_array, &$insert_id) {
 
     $orders_id = $data_array['orders_id'];
+
+    // prepare to be able to process information from the order class.
+    if (!class_exists('order')) {
+      require_once(DIR_WS_CLASSES . 'order.php');
+    }
+    // Collect information associated with the order_id.
+    $order = new order($orders_id);
+
+    // if the delivery date is not to be collected, then don't store the delivery date with the order.
+    if (!$this->display_delivery_date($order)) {
+     return;
+    }
     
+    // prepare the data to be incorporated into the order.
     $sql_data_array = array('order_delivery_date'  => $callingClass->info['order_delivery_date']);
 
     zen_db_perform(TABLE_ORDERS, $sql_data_array, 'update', 'orders_id = ' . (int)$orders_id);
@@ -109,12 +124,44 @@ class zcObserverOrderDeliveryDateObserver extends base {
       $this->order_delivery_date = $_SESSION['order_delivery_date'];
     }
 
+    // If progressing to checkout then clean up the entry for moving forwards.
     if ( isset($_POST['action']) && ($_POST['action'] == 'process') ) {
+      // If there was something in the date entry form, then set it to the session for further processing.
       if (zen_not_null($_POST['order_delivery_date'])) {
         $_SESSION['order_delivery_date'] = zen_db_prepare_input($_POST['order_delivery_date']);
       }
+
+      // If there is a date to be processed, then store it internally to continue processing in this observer class.
       $this->order_delivery_date = (isset($_SESSION['order_delivery_date'])) ? $_SESSION['order_delivery_date'] : null;
     }
+  }
+
+  // ZC 1.5.5  $zco_notifier->notify('NOTIFY_HEADER_END_CHECKOUT_SHIPPING');
+  function updateNotifyHeaderEndCheckoutShipping(&$callingClass, $notifier) {
+
+    $GLOBALS['display_order_delivery_date'] = isset($GLOBALS['$display_delivery_date']) 
+                                            ?
+                                              $GLOBALS['display_delivery_date'] 
+                                            :
+                                              true;
+
+    $GLOBALS['order_delivery_date_state_text'] = (defined('MIN_DISPLAY_DELIVERY_DATE')
+                                               && MIN_DISPLAY_DELIVERY_DATE > 0
+                                               && (method_exists($this, 'display_delivery_date')
+                                                    ? $this->display_delivery_date($GLOBALS['order'])
+                                                    : true
+                                                  )
+                                             )
+                                             ? TABLE_HEADING_DELIVERY_DATE_IS_REQUIRED
+                                             : TABLE_HEADING_DELIVERY_DATE_IS_OPTIONAL;
+
+  }
+
+  // ZC 1.5.5  $zco_notifier->notify('NOTIFY_HEADER_END_CHECKOUT_CONFIRMATION');
+  function updateNotifyHeaderEndCheckoutConfirmation(&$callingClass, $notifier) {
+    $GLOBALS['display_order_delivery_date'] = $this->display_delivery_date($GLOBALS['order']);
+
+    $GLOBALS['order_delivery_date_text'] = zen_not_null($GLOBALS['order']->info['order_delivery_date']) ? zen_date_long($GLOBALS['order']->info['order_delivery_date']) : NONE_SELECTED;
   }
 
   // ZC 1.5.5: $this->notify('ORDER_QUERY_ADMIN_COMPLETE', array('orders_id' => $order_id));
@@ -186,6 +233,12 @@ class zcObserverOrderDeliveryDateObserver extends base {
       $email_order = null; // Need to figure out how this would work for ZC 1.5.1 if at all.
       $html_msg = null; // Need to figure out how this would work for ZC 1.5.1 if at all.
       $this->updateNotifyOrderEmailBeforeProducts($callingClass, $notifier, $paramsArray, $email_order, $html_msg);
+    }
+    if ($notifier == 'NOTIFY_HEADER_END_CHECKOUT_SHIPPING') {
+      $this->updateNotifyHeaderEndCheckoutShipping($callingClass, $notifier);
+    }
+    if ($notifier == 'NOTIFY_HEADER_END_CHECKOUT_CONFIRMATION') {
+      $this->updateNotifyHeaderEndCheckoutConfirmation($callingClass, $notifier);
     }
     if ($notifier == 'NOTIFY_HEADER_START_CHECKOUT_SHIPPING') {
       $this->updateNotifyHeaderStartCheckoutShipping($callingClass, $notifier);
