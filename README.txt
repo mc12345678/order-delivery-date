@@ -1,5 +1,5 @@
 Contribution:  Order Delivery Date
-Version:       2.6
+Version:       2.6.1
 Designed For:  Zen Cart v1.3.8a, 1.3.9f, 1.5.1 and 1.5.5 Releases
 Forum Page:    http://www.zen-cart.com/forum/showthread.php?t=92762
 
@@ -18,7 +18,7 @@ completing an order, and when updating order status via Admin.
 
 ========================================================
 
-INSTALL:
+INSTALL (For upgrades see below):
 
 a. BACKUP ALL OF YOUR FILES that you will be overwriting as well as your Database before installing!!!
 
@@ -27,14 +27,15 @@ Admin->Tools->Install SQL patches.
 
 c. Copy files to your install.  
    - Be sure to use the directory appropriate for your Zen Cart version (1.3.8, 1.3.9, 1.5.1, 1.5.5, etc.).
-   - Make sure to change any folders labeled YOUR_TEMPLATE to the template you are using.
+   - Make sure to change any folders labeled YOUR_TEMPLATE or YOUR_TEMPLATE_RESPONSIVE to the template you are using.
 
 To change blocked out dates, open the following file and read the instructions contained within it: includes/modules/pages/checkout_shipping/jscript_calendar_head.php
 
 
-d. The sql file adds a new setting under configuration>minimum values. If set to a value greater than 0, delivery date is required. If set to 0, delivery date is not required. Default is 1 - required.
+d. The sql file adds a new setting under configuration>minimum values. If set to a value greater than 0, delivery date is required. If set to 0 or empty, delivery date is not required. Default is 1 - required.
 
-e. There is now an option to not display the Order Delivery Date selector based on the deliver to address.
+e. There is now an option beginning in Zen Cart 1.5.5 to not display the Order Delivery Date selector based on the
+   deliver to address.
    the ZC 1.5.5 file: includes\extra_datafiles\order_delivery_date_location.php contains a define that indicates on
    which destination address type the delivery date field should be shown (national to the store's location,
    international, or both). (When not shown it ignores the settings above about required or optional, but when shown
@@ -57,6 +58,15 @@ includes/modules/pages/checkout_shipping/header_php.php
 ========================================================
 
 HISTORY:
+
+08/11/2018 by mc12345678 (http://mc12345678.com) (v2.6.1) as identified by a few people, the new checkout plugin that offers
+  a single page check (One Page Checkout) was found not to be compatible with this plugin.  This version incorporates use
+  of notifiers in that software and the way it has reworked core Zen Cart operation to maintain operation.  Also more 
+  work has been done to move operations further away from the core code and to make use of common characteristics in the
+  Zen Cart software.
+  - Modified the template files to expand the ability to offer modified content.
+  - Modified usage of global variables to reference $GLOBALS[''] instead of using the global construct.
+  - Updated the jscript_a-mootools.js file to version 1.2.5.  
 
 01/28/2018 by mc12345678 (http://mc12345678.com) (v2.6) as requested by Audrey at: https://www.zen-cart.com/showthread.php?92762-Order-Delivery-Date-Support-Thread&p=1341081#post1341081
   incorporated a method to display/hide (and therefore support requiring) the order delivery date field based on whether
