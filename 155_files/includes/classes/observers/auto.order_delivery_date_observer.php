@@ -34,6 +34,12 @@ class zcObserverOrderDeliveryDateObserver extends base {
     $attachNotifier[] = 'NOTIFY_HEADER_END_CHECKOUT_SHIPPING';
     $attachNotifier[] = 'NOTIFY_HEADER_END_CHECKOUT_CONFIRMATION';
     $attachNotifier[] = 'NOTIFY_HEADER_END_CHECKOUT_SUCCESS';
+
+    $attachNotifier[] = 'NOTIFY_HEADER_START_CHECKOUT_ONE';
+    $attachNotifier[] = 'NOTIFY_HEADER_END_CHECKOUT_ONE';
+    $attachNotifier[] = 'NOTIFY_HEADER_START_CHECKOUT_ONE_CONFIRMATION';
+    $attachNotifier[] = 'NOTIFY_HEADER_END_CHECKOUT_ONE_CONFIRMATION';
+
     $attachNotifier[] = 'ORDER_QUERY_ADMIN_COMPLETE';
 
     $this->attach($this, $attachNotifier);
@@ -128,7 +134,7 @@ class zcObserverOrderDeliveryDateObserver extends base {
     }
 
     // If progressing to checkout then clean up the entry for moving forwards.
-    if ( isset($_POST['action']) && ($_POST['action'] == 'process') ) {
+    if ( isset($_POST['action']) && ($_POST['action'] == 'process') || $callingClass == 'NOTIFY_HEADER_START_CHECKOUT_ONE_CONFIRMATION' && isset($_POST['order_confirmed']) && ($_POST['order_confirmed'] == '1')) {
       // If there was something in the date entry form, then set it to the session for further processing.
       if (zen_not_null($_POST['order_delivery_date'])) {
         $_SESSION['order_delivery_date'] = zen_db_prepare_input($_POST['order_delivery_date']);
@@ -165,6 +171,32 @@ class zcObserverOrderDeliveryDateObserver extends base {
     $GLOBALS['display_order_delivery_date'] = $this->display_delivery_date($GLOBALS['order']);
 
     $GLOBALS['order_delivery_date_text'] = zen_not_null($GLOBALS['order']->info['order_delivery_date']) ? zen_date_long($GLOBALS['order']->info['order_delivery_date']) : NONE_SELECTED;
+  }
+
+  // NOTIFY_HEADER_START_CHECKOUT_ONE
+  function updateNotifyHeaderStartCheckoutOne(&$callingClass, $notifier) {
+
+//    trigger_error('checkoutonePOST: ' . print_r($_POST, true), E_USER_WARNING);
+    $this->updateNotifyHeaderStartCheckoutShipping($callingClass, $notifier);
+
+  }
+
+  // NOTIFY_HEADER_END_CHECKOUT_ONE
+  function updateNotifyHeaderEndCheckoutOne(&$callingClass, $notifier) {
+    $this->updateNotifyHeaderEndCheckoutShipping($callingClass, $notifier);
+  }
+
+  // NOTIFY_HEADER_START_CHECKOUT_ONE_CONFIRMATION
+  function updateNotifyHeaderStartCheckoutOneConfirmation(&$callingClass, $notifier) {
+
+//    trigger_error('checkoutonePOST: ' . print_r($_POST, true), E_USER_WARNING);
+    $this->updateNotifyHeaderStartCheckoutShipping($callingClass, $notifier);
+
+  }
+
+  // NOTIFY_HEADER_END_CHECKOUT_ONE_CONFIRMATION
+  function updateNotifyHeaderEndCheckoutOneConfirmation(&$callingClass, $notifier) {
+    $this->updateNotifyHeaderEndCheckoutConfirmation($callingClass, $notifier);
   }
 
   // NOTIFY_HEADER_END_CHECKOUT_SUCCESS
@@ -253,6 +285,18 @@ class zcObserverOrderDeliveryDateObserver extends base {
     }
     if ($notifier == 'NOTIFY_HEADER_END_CHECKOUT_SUCCESS') {
       $this->updateNotifyHeaderEndCheckoutSuccess($callingClass, $notifier);
+    }
+    if ($notifier == 'NOTIFY_HEADER_START_CHECKOUT_ONE') {
+      $this->updateNotifyHeaderStartCheckoutOneConfirmation($callingClass, $notifier);
+    }
+    if ($notifier == 'NOTIFY_HEADER_END_CHECKOUT_ONE') {
+      $this->updateNotifyHeaderEndCheckoutOne($callingClass, $notifier);
+    }
+    if ($notifier == 'NOTIFY_HEADER_START_CHECKOUT_ONE_CONFIRMATION') {
+      $this->updateNotifyHeaderStartCheckoutOneConfirmation($callingClass, $notifier);
+    }
+    if ($notifier == 'NOTIFY_HEADER_END_CHECKOUT_ONE_CONFIRMATION') {
+      $this->updateNotifyHeaderEndCheckoutOneConfirmation($callingClass, $notifier);
     }
     if ($notifier == 'ORDER_QUERY_ADMIN_COMPLETE') {
       $this->updateOrderQueryAdminComplete($callingClass, $notifier, $paramsArray);
