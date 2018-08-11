@@ -51,5 +51,6 @@ define('ERROR_PLEASE_RESELECT_SHIPPING_METHOD', 'Your available shipping options
   define('TABLE_HEADING_DELIVERY_DATE_IS_OPTIONAL', ' is Optional!');
   define('TABLE_HEADING_DELIVERY_DATE_IS_REQUIRED', ' is Required!');
   define('ERROR_PLEASE_CHOOSE_DELIVERY_DATE', 'Please choose a delivery date');
+  define('TEXT_ORDER_DELIVERY_DATE_DATE_TEXT', 'Date:');
 // END Order Delivery 
 ?>

@@ -33,6 +33,7 @@ class zcObserverOrderDeliveryDateObserver extends base {
     $attachNotifier[] = 'NOTIFY_HEADER_START_CHECKOUT_SHIPPING';
     $attachNotifier[] = 'NOTIFY_HEADER_END_CHECKOUT_SHIPPING';
     $attachNotifier[] = 'NOTIFY_HEADER_END_CHECKOUT_CONFIRMATION';
+    $attachNotifier[] = 'NOTIFY_HEADER_END_CHECKOUT_SUCCESS';
     $attachNotifier[] = 'ORDER_QUERY_ADMIN_COMPLETE';
 
     $this->attach($this, $attachNotifier);
@@ -166,6 +167,11 @@ class zcObserverOrderDeliveryDateObserver extends base {
     $GLOBALS['order_delivery_date_text'] = zen_not_null($GLOBALS['order']->info['order_delivery_date']) ? zen_date_long($GLOBALS['order']->info['order_delivery_date']) : NONE_SELECTED;
   }
 
+  // NOTIFY_HEADER_END_CHECKOUT_SUCCESS
+  function updateNotifyHeaderEndCheckoutSuccess(&$callingClass, $notifier) {
+    unset($_SESSION['order_delivery_date']);
+  }
+
   // ZC 1.5.5: $this->notify('ORDER_QUERY_ADMIN_COMPLETE', array('orders_id' => $order_id));
   function updateOrderQueryAdminComplete(&$callingClass, $notifier, $paramsArray) {
 
@@ -244,6 +250,9 @@ class zcObserverOrderDeliveryDateObserver extends base {
     }
     if ($notifier == 'NOTIFY_HEADER_START_CHECKOUT_SHIPPING') {
       $this->updateNotifyHeaderStartCheckoutShipping($callingClass, $notifier);
+    }
+    if ($notifier == 'NOTIFY_HEADER_END_CHECKOUT_SUCCESS') {
+      $this->updateNotifyHeaderEndCheckoutSuccess($callingClass, $notifier);
     }
     if ($notifier == 'ORDER_QUERY_ADMIN_COMPLETE') {
       $this->updateOrderQueryAdminComplete($callingClass, $notifier, $paramsArray);

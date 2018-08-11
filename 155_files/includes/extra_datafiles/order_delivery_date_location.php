@@ -1,17 +1,13 @@
 <?php
 /**
  * @package statistics
- * @copyright Copyright 2003-2012 Zen Cart Development Team
+ * @copyright Copyright 2003-2018 Zen Cart Development Team
+ * @copyright Copyright 2018 mc12345678 @ mc12345678.com
  * @copyright Portions Copyright 2003 osCommerce
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
- * @version GIT: $Id: Author: DrByte  Fri Jun 29 02:42:52 2012 -0400 New in v1.5.1 $
+ * @version GIT: $Id: Author: mc12345678  Fri Jun 29 02:42:52 2018 -0400 New in v1.5.5 $
  */
 
-/**
- * Valid options are:
- * 'on' - triggers the default counter for products_viewed
- * 'off' - the default counter functionality is bypassed
- */
 /**
  * This file contains the definition for when to display the order delivery date field based on the shipping destination.
  * Or to always show the order date.
