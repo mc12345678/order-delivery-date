@@ -20,14 +20,15 @@
  */
 
 // BEGIN Order Delivery Date - checkout_shipping and checkout_one
+  // This first define is also used on checkout_confirmation.
   define('TABLE_HEADING_DELIVERY_DATE', 'Desired Delivery Date%s');
   define('TABLE_HEADING_DELIVERY_DATE_IS_OPTIONAL', ' is Optional!');
   define('TABLE_HEADING_DELIVERY_DATE_IS_REQUIRED', ' is Required!');
   define('ERROR_PLEASE_CHOOSE_DELIVERY_DATE', 'Please choose a delivery date');
   define('TEXT_ORDER_DELIVERY_DATE_DATE_TEXT', 'Date:');
 // END Order Delivery 
-// Begin Order Delivery Date - checkout_confirmation expected @TODO need to update/modify otherwise first occurrence will be used.
-  define('TABLE_HEADING_DELIVERY_DATE', 'Desired Delivery Date');
+// Begin Order Delivery Date - checkout_confirmation
+  define('TABLE_HEADING_DELIVERY_DATE_EMPTY', '');
   define('NONE_SELECTED', 'None Selected');
 // End Order Delivery Date
 // BEGIN Order Delivery Date - checkout_process
