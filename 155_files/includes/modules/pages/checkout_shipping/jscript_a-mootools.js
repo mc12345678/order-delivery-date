@@ -1,5 +1,5 @@
 //MooTools, <http://mootools.net>, My Object Oriented (JavaScript) Tools. Copyright (c) 2006-2009 Valerio Proietti, <http://mad4milk.net>, MIT Style License.
-jQuery.noConflict();
+if(undefined!==typeof(jQuery)){jQuery.noConflict();}
 
 var MooTools={version:"1.2.5",build:"008d8f0f2fcc2044e54fdd3635341aaab274e757"};var Native=function(l){l=l||{};var a=l.name;var j=l.legacy;var b=l.protect;
 var c=l.implement;var i=l.generics;var g=l.initialize;var h=l.afterImplement||function(){};var d=g||j;i=i!==false;d.constructor=Native;d.$family={name:"native"};
