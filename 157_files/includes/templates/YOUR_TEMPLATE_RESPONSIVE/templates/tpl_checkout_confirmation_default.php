@@ -93,7 +93,7 @@
 <?php /* BEGIN Order Delivery Date */
   if (isset($display_order_delivery_date) && $display_order_delivery_date) { ?>
   <br />
-  <h3><?php echo TABLE_HEADING_DELIVERY_DATE; ?></h3>
+  <h3><?php echo sprintf(TABLE_HEADING_DELIVERY_DATE, TABLE_HEADING_DELIVERY_DATE_EMPTY); ?></h3>
   <div class="buttonRow forward"><?php echo '<a href="' . $editShippingButtonLink . '">' . zen_image_button(BUTTON_IMAGE_EDIT_SMALL, BUTTON_EDIT_SMALL_ALT) . '</a>'; ?></div>
   <h4><?php echo $order_delivery_date_text; ?></h4><br />
 <?php } /* END Order Delivery Date*/ ?>
