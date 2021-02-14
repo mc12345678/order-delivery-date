@@ -47,7 +47,6 @@ a:visited {color:#0066cc;}
     $EXTRA_HEADER_INFO
   </div>
 
-
   <!-- Content Section -->
   <div class="content">
     <div class="content-line">
@@ -77,7 +76,8 @@ a:visited {color:#0066cc;}
         <td class="content-line-title"><strong>$ADDRESS_DELIVERY_TITLE</strong></td>
       </tr>
       <tr>
-        <td class="address">$ADDRESS_DELIVERY_DETAIL</td>
+        <td class="address">$ADDRESS_DELIVERY_DETAIL<br>
+        $EMAIL_TEXT_TELEPHONE $EMAIL_CUSTOMER_PHONE</td>
       </tr>
 
       <tr>
@@ -112,6 +112,10 @@ a:visited {color:#0066cc;}
  </div>
 </div>
 
+  <div class="order_message">
+    $EMAIL_ORDER_MESSAGE
+  </div>
+
   <!-- Footer Section -->
   <div class="footer">
     <div class="copyright">$EMAIL_FOOTER_COPYRIGHT</div>
@@ -120,8 +124,9 @@ a:visited {color:#0066cc;}
 </div>
 <div class="disclaimer">
   <div class="disclaimer1">$EMAIL_DISCLAIMER</div>
-  <div class="disclaimer2">$EMAIL_SPAM_DISCLAIMER</div>
 </div>
+<div class="extra-info">
 $EXTRA_INFO
+</div>
 </body>
 </html>
