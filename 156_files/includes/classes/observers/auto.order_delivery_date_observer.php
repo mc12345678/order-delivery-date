@@ -26,9 +26,6 @@ class zcObserverOrderDeliveryDateObserver extends base {
 
   function __construct() {
     $attachNotifier = array();
-    $attachNotifier[] = 'NOTIFY_ADMIN_ORDERS_SEARCH_PARMS';
-    $attachNotifier[] = 'NOTIFY_ADMIN_ORDERS_UPDATE_ORDER_START';
-    $attachNotifier[] = 'ZEN_UPDATE_ORDERS_HISTORY_BEFORE_INSERT';
     $attachNotifier[] = 'NOTIFY_ADMIN_ORDERS_LIST_EXTRA_COLUMN_HEADING';
     $attachNotifier[] = 'NOTIFY_ADMIN_ORDERS_LIST_EXTRA_COLUMN_DATA';
 
@@ -50,54 +47,6 @@ class zcObserverOrderDeliveryDateObserver extends base {
     $attachNotifier[] = 'ORDER_QUERY_ADMIN_COMPLETE';
 
     $this->attach($this, $attachNotifier);
-  }
-
-  // ZC 1.5.7: $zco_notifier->notify('NOTIFY_ADMIN_ORDERS_SEARCH_PARMS', $keywords, $search, $search_distinct, $new_fields, $new_table, $order_by);
-  function updateNotifyAdminOrdersSearchParms(&$callingClass, $notifier, $keywords, &$search, &$search_distinct, &$new_fields, &$new_table, &$order_by) {
-    global $sniffer;
-
-    if (!$sniffer->field_exists(TABLE_ORDERS, 'order_delivery_date')) return;
-
-    $new_fields .= ', o.order_delivery_date';
-  }
-
-  //  ZC 1.5.7: $zco_notifier->notify('NOTIFY_ADMIN_ORDERS_UPDATE_ORDER_START', $oID);
-  //   This has to be used to add to the order message because osh_status_update doesn't support message updating based on oID
-  function updateNotifyAdminOrdersUpdateOrderStart(&$callingClass, $notifier, $oID) {
-    global $comments, $db, $email_include_message, $sniffer;
-    
-    // prevent error if the field does not exist in the table by early escaping.
-    if (!$sniffer->field_exists(TABLE_ORDERS, 'order_delivery_date')) return;
-    
-    $sql = "SELECT order_delivery_date FROM " . TABLE_ORDERS . " WHERE orders_id = " . (int)$oID . " LIMIT 1";
-    $check_status = $db->Execute($sql);
-    
-    if ($check_status->EOF) {
-      return;
-    }
-
-    $this->email_include_message = $email_include_message;
-    if (!$this->email_include_message) {
-      $this->comments = $comments; // Capture the comments for other use
-      $comments = '';
-      $email_include_message = true;
-    }
-
-    // If want $html_msg type data, then need to incorporate the following in some way:
-    //   $html_msg['EMAIL_TEXT_DELIVERY_DATE'] = EMAIL_TEXT_DELIVERY_DATE . ' ' . zen_date_long($check_status->fields['order_delivery_date']);
-
-    $comments = EMAIL_TEXT_DELIVERY_DATE . ' ' . zen_date_long($check_status->fields['order_delivery_date']) . "\n\n" . $comments;
-  }
-
-  // ZC 1.5.7: $GLOBALS['zco_notifier']->notify('ZEN_UPDATE_ORDERS_HISTORY_BEFORE_INSERT', array(), $osh_sql);
-  function updateZenUpdateOrdersHistoryBeforeInsert(&$callingClass, $notifier, $emptyArray, &$osh_sql) {
-    global $sniffer;
-
-    if (!$sniffer->field_exists(TABLE_ORDERS, 'order_delivery_date')) return;
-
-    if (empty($this->email_include_message)) {
-      $osh_sql['comments'] = $this->comments; // Restore the content of the comments to what it was before trying to use the code to notify about the delivery date.
-    }
   }
 
   // ZC 1.5.6 - 1.5.7: $zco_notifier->notify('NOTIFY_ADMIN_ORDERS_LIST_EXTRA_COLUMN_HEADING', array(), $extra_headings);
