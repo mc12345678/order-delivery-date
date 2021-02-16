@@ -1,6 +1,6 @@
 Contribution:  Order Delivery Date
-Version:       2.6.1
-Designed For:  Zen Cart v1.3.8a, 1.3.9f, 1.5.1 and 1.5.5 Releases
+Version:       2.7.1
+Designed For:  Zen Cart v1.3.8a, 1.3.9f, 1.5.1, 1.5.5, 1.5.6 and 1.5.7 Releases
 Forum Page:    http://www.zen-cart.com/forum/showthread.php?t=92762
 
 
@@ -22,11 +22,11 @@ INSTALL (For upgrades see below):
 
 a. BACKUP ALL OF YOUR FILES that you will be overwriting as well as your Database before installing!!!
 
-b. Run the sql statement (shipdate.sql) against your database using 
+b. Run the sql statement (deliverydate.sql) against your database using 
 Admin->Tools->Install SQL patches.
 
 c. Copy files to your install.  
-   - Be sure to use the directory appropriate for your Zen Cart version (1.3.8, 1.3.9, 1.5.1, 1.5.5, etc.).
+   - Be sure to use the directory appropriate for your Zen Cart version (1.3.8, 1.3.9, 1.5.1, 1.5.5, 1.5.6, 1.5.7 etc.).
    - Make sure to change any folders labeled YOUR_TEMPLATE or YOUR_TEMPLATE_RESPONSIVE to the template you are using.
 
 To change blocked out dates, open the following file and read the instructions contained within it: includes/modules/pages/checkout_shipping/jscript_calendar_head.php
@@ -36,7 +36,7 @@ d. The sql file adds a new setting under configuration>minimum values. If set to
 
 e. There is now an option beginning in Zen Cart 1.5.5 to not display the Order Delivery Date selector based on the
    deliver to address.
-   the ZC 1.5.5 file: includes\extra_datafiles\order_delivery_date_location.php contains a define that indicates on
+   the ZC 1.5.5+ file: includes\extra_datafiles\order_delivery_date_location.php contains a define that indicates on
    which destination address type the delivery date field should be shown (national to the store's location,
    international, or both). (When not shown it ignores the settings above about required or optional, but when shown
    then it follows the settings of required or optional.)
@@ -44,6 +44,8 @@ e. There is now an option beginning in Zen Cart 1.5.5 to not display the Order D
 UPGRADE: 
 If you are upgrading from an older version than 2.4, please run the file 
 update_to_2.4.sql in Admin->Tools->Install SQL Patches. 
+If you are upgrading from an older version than 2.7 (including those from before 2.4), please run the file 
+update_to_2.7.sql in Admin->Tools->Install SQL Patches. 
 
 If you are upgrading from a version before 2.5.2, there are core files that no longer require revision to support this
 plugin and therefore either now or on your next upgrade the changes previously made to the following files are no longer
@@ -58,6 +60,17 @@ includes/modules/pages/checkout_shipping/header_php.php
 ========================================================
 
 HISTORY:
+
+02/15/2021 by mc12345678 (https://mc12345678.com) (v2.7.1) There have been a lot of changes in the core Zen Cart Software.
+  To accomodate, there are ways that this software can be introduced without significant modification of the core software.
+  The biggest changes to that software are in the admin main programs where the order_delivery_date field is to be presented.
+  Changes made:
+  - Moved language definitions out of individual language files and to a combined extra_definitions file.
+  - Incorporated use of sprintf to support positioning text in support of multiple languages.
+  - Added Zen Cart 1.5.6 specific fileset .
+  - Added Zen Cart 1.5.7 fileset.
+  - Improved checking to apply jQuery.noConflict to cases where jQuery has been loaded For Zen Cart 1.5.5+.
+  - Updated order_delivery_date to be datetime and possibly set to NULL though with a default of '0001-01-01 00:00:00'
 
 08/11/2018 by mc12345678 (http://mc12345678.com) (v2.6.1) as identified by a few people, the new checkout plugin that offers
   a single page check (One Page Checkout) was found not to be compatible with this plugin.  This version incorporates use
